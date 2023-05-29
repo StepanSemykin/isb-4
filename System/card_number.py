@@ -23,7 +23,7 @@ def get_number(hash: str, last_numerals: str,
             for index, result in enumerate(results):
                 if result:
                     result_list.append(int(numbers[index][1]))
-                    logging.info('Card valid number found')
+                    logging.info(' Card valid number found')
     return result_list
 
 

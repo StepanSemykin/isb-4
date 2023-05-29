@@ -51,7 +51,7 @@ class Stats:
         logging.info(' Histogram is constructed')
         return figure
 
-    def save_hidtogram(self, figure: plt) -> None:
+    def save_histogram(self, figure: plt) -> None:
         try:
             figure.savefig(self.hist)
             logging.info('Image saved successfully.')

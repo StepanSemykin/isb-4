@@ -6,22 +6,22 @@ logger.setLevel('INFO')
 
 
 class Configuration:
-    def __init__(self, path_json: str) -> None:
-        self.settings_path = path_json
-
-    def write_settings(self, settings: dict) -> None:
+    def write_card(self, card: dict, path_json: str) -> None:
+        settings = Configuration.load_settings(self, path_json)
+        d = dict.fromkeys(['card'], card)
+        settings.update(d)
         try:
-            with open(self.settings_path, 'w') as f:
+            with open(path_json, 'w') as f:
                 json.dump(settings, f)
-            logging.info(' Settings saved')
+            logging.info(' Card saved')
         except Exception as err:
-            logging.warning(f' Settings are not saved\nError: {err}')
+            logging.warning(f' Card are not saved\nError: {err}')
             raise
 
-    def load_settings(self) -> dict:
+    def load_settings(self, path_json: str) -> dict:
         settings = None
         try:
-            with open(self.settings_path) as f:
+            with open(path_json) as f:
                 settings = json.load(f)
             logging.info(' Settings are loaded')
         except OSError as err:
