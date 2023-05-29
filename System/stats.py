@@ -9,7 +9,7 @@ logger.setLevel('INFO')
 
 class Stats:
     def __init__(self, path: str) -> None:
-        self.content = settings.Configuration(path).load_settings()
+        self.content = settings.Configuration().load_settings(path)
         self.hist = self.content['hist']
         self.stats = self.content['statistics']
 
@@ -46,7 +46,7 @@ class Stats:
         plt.title("Addiction of running time on the number of cores")
         x = statistics.keys()
         y = statistics.values()
-        plt.bar(x, y, color="green", width=0.05)
+        plt.bar(x, y, color="green", width=0.25)
         plt.show(block=False)
         logging.info(' Histogram is constructed')
         return figure
