@@ -2,9 +2,9 @@ import sys
 import time
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import (QApplication, QFileDialog, QLabel, 
-                             QMainWindow, QMessageBox, QPushButton, 
-                             QWidget, QAbstractSpinBox, QSpinBox)
+from PyQt5.QtWidgets import (QApplication, QFileDialog, QLabel,
+                             QMainWindow, QMessageBox, QPushButton,
+                             QWidget, QAbstractSpinBox, QSpinBox, QProgressBar)
 import settings
 import stats
 import card_number
@@ -84,20 +84,28 @@ class GraphicalInterface(QMainWindow):
                                     f'Settings file was not loaded.'
                                     f' Please download the settings')
             self.upload_settings_file()
+        self.pbar = ProgressBar(len(self.architecture['bins']))
+        self.pbar.show()
+        def increase(count: int) -> None:
+            ProgressBar.increase(self.pbar, count)
+            QApplication.processEvents()
         start = time.time()
+        print(len(self.architecture['bins']))
         self.numbers = card_number.get_number(self.architecture['hash'],
                                               self.architecture['last_numbers'],
                                               self.architecture['bins'],
-                                              self.cores_spin.value())
+                                              self.cores_spin.value(),
+                                              increase)
         end = time.time()
         self.statistic_list.append([self.cores_spin.value(), end - start])
         self.is_real_numbers = {}
         for i in self.numbers:
             self.correct = card_number.luhn_algorithm(str(i))
             self.is_real_numbers[i] = self.correct
-        print(self.is_real_numbers)
         settings.Configuration.write_card(
             self, self.is_real_numbers, self.file_name)
+        QMessageBox.information(self, 'Recovery',
+                                f'Card number saved to file: {self.file_name}')
 
     def get_statistic(self) -> None:
         if self.settings_not_loaded:
@@ -114,7 +122,7 @@ class GraphicalInterface(QMainWindow):
             for i in self.statistic_list:
                 self.data.write_stats(i[0], i[1])
             QMessageBox.information(
-                self, 'Statistic', 
+                self, 'Statistic',
                 f' Statistic are loaded from file: {self.data.stats}')
 
     def make_historgam(self) -> None:
@@ -129,13 +137,28 @@ class GraphicalInterface(QMainWindow):
         print(self.statistic_dict)
         stats.Stats.save_histogram(self.data, self.hist)
         QMessageBox.information(
-                self, 'Histogram', 
-                f' Histogram saved from file: {self.data.hist}')
+            self, 'Histogram',
+            f' Histogram saved from file: {self.data.hist}')
+
+
+class ProgressBar(QMainWindow):
+    def __init__(self, len):
+        super().__init__()
+        self.setWindowTitle('Progress')
+        self.setFixedSize(300, 120)
+        self.move(800, 300)
+        self.progress_bar = QProgressBar(self)
+        self.progress_bar.setGeometry(10, 40, 295, 30)
+        self.progress_bar.setMaximum(len)
+        self.progress_bar.setValue(0)
+        self.per = 0
+
+    def increase(self, count: int) -> None:
+        self.progress_bar.setValue(count)
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     w = GraphicalInterface()
-
     w.show()
     sys.exit(app.exec_())

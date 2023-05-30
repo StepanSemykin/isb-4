@@ -1,8 +1,7 @@
 import hashlib
-from typing import Callable
 import multiprocessing as mp
 import logging
-from random import randint
+from collections.abc import Callable
 
 logger = logging.getLogger()
 logger.setLevel('INFO')
@@ -12,9 +11,10 @@ def is_valid(hash: str, number: str) -> bool:
     return hashlib.sha224(number.encode()).hexdigest() == hash
 
 
-def get_number(hash: str, last_numerals: str, 
-               bins: tuple, cores: int = mp.cpu_count()) -> list:
+def get_number(hash: str, last_numerals: str,
+               bins: tuple, cores: int = mp.cpu_count(), func: Callable[[int], None] = None) -> list:
     result_list = []
+    count_bins = 0
     with mp.Pool(processes=cores) as p:
         for j in bins:
             numbers = [(hash, f'{j}{str(i).zfill(6)}{last_numerals}')
@@ -23,7 +23,8 @@ def get_number(hash: str, last_numerals: str,
             for index, result in enumerate(results):
                 if result:
                     result_list.append(int(numbers[index][1]))
-                    logging.info(' Card valid number found')
+            count_bins += 1
+            func(count_bins)
     return result_list
 
 
