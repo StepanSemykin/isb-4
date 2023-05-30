@@ -7,6 +7,11 @@ logger.setLevel('INFO')
 
 class Configuration:
     def write_card(self, card: dict, path_json: str) -> None:
+        """Writes the card number in json.
+        Args:
+            card (dict): Сard number and algorithm Luhn result.
+            path_json (str): Path to file.
+        """
         settings = Configuration.load_settings(self, path_json)
         d = dict.fromkeys(['card'], card)
         settings.update(d)
@@ -19,6 +24,12 @@ class Configuration:
             raise
 
     def load_settings(self, path_json: str) -> dict:
+        """Loads settings from json.
+        Args:
+            path_json (str): Path to file.
+        Returns:
+            dict: Settings.
+        """
         settings = None
         try:
             with open(path_json) as f:

@@ -9,11 +9,20 @@ logger.setLevel('INFO')
 
 class Stats:
     def __init__(self, path: str) -> None:
+        """Loads settings from json.
+        Args:
+            path (str): Path to file.
+        """
         self.content = settings.Configuration().load_settings(path)
         self.hist = self.content['hist']
         self.stats = self.content['statistics']
 
     def write_stats(self, cores: int, time: float) -> None:
+        """Writes statistics in csv.
+        Args:
+            cores (int): Number of cores.
+            time (float): Execution time.
+        """
         try:
             with open(self.stats, 'a', newline='') as f:
                 writer = csv.writer(f)
@@ -24,6 +33,10 @@ class Stats:
             raise
 
     def load_stats(self) -> dict:
+        """Loads statistics from csv.
+        Returns:
+            dict: Statistics.
+        """
         try:
             with open(self.stats, "r", newline="") as f:
                 read = csv.reader(f)
@@ -40,6 +53,12 @@ class Stats:
         return stats
 
     def draw_histogram(self, statistics: dict) -> plt:
+        """Creates a histogram based on the data.
+        Args:
+            statistics (dict): Statistical data.
+        Returns:
+            plt: Histogram.
+        """
         figure = plt.figure(figsize=(30, 5))
         plt.ylabel("Running time")
         plt.xlabel("Number of cores")
@@ -52,9 +71,13 @@ class Stats:
         return figure
 
     def save_histogram(self, figure: plt) -> None:
+        """Saves the histogram image.
+        Args:
+            figure (plt): Histogram.
+        """
         try:
             figure.savefig(self.hist)
             logging.info('Image saved successfully.')
-        except Exception as err:
-            logging.exception(f"Error: {err}")
-            raise err
+        except OSError as err:
+            logging.warning(f' Image is not saved\nError {err}')
+            raise

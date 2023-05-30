@@ -14,7 +14,7 @@ DEFAULT = 'Files\\settings.json'
 
 class GraphicalInterface(QMainWindow):
     def __init__(self) -> None:
-        """Initialization of the application window.
+        """Initializates of the application window.
         """
         super(GraphicalInterface, self).__init__()
         self.settings_not_loaded = True
@@ -61,6 +61,8 @@ class GraphicalInterface(QMainWindow):
         self.hist_button.clicked.connect(self.make_historgam)
 
     def upload_settings_file(self) -> None:
+        """Loads the settings/default settings for system
+        """
         try:
             self.file_name, _ = QFileDialog.getOpenFileName(
                 self, 'Open Settings File', '', 'Settings Files (*.json)')
@@ -79,6 +81,8 @@ class GraphicalInterface(QMainWindow):
         self.settings_not_loaded = False
 
     def recovery(self) -> None:
+        """Searches for the correct card number and writes it to json.
+        """
         if self.settings_not_loaded:
             QMessageBox.information(self, 'Settings',
                                     f'Settings file was not loaded.'
@@ -86,7 +90,12 @@ class GraphicalInterface(QMainWindow):
             self.upload_settings_file()
         self.pbar = ProgressBar(len(self.architecture['bins']))
         self.pbar.show()
+
         def increase(count: int) -> None:
+            """Increases progress bar and updates execution panel.
+            Args:
+                count (int): Number of verified bins.
+            """
             ProgressBar.increase(self.pbar, count)
             QApplication.processEvents()
         start = time.time()
@@ -108,6 +117,8 @@ class GraphicalInterface(QMainWindow):
                                 f'Card number saved to file: {self.file_name}')
 
     def get_statistic(self) -> None:
+        """Loads statistics in csv.
+        """
         if self.settings_not_loaded:
             QMessageBox.information(self, 'Settings',
                                     f'Settings file was not loaded.'
@@ -126,6 +137,9 @@ class GraphicalInterface(QMainWindow):
                 f' Statistic are loaded from file: {self.data.stats}')
 
     def make_historgam(self) -> None:
+        """Builds a histogram based on the statistics file 
+        and saves the histogram image.
+        """
         if self.settings_not_loaded:
             QMessageBox.information(self, 'Settings',
                                     f'Settings file was not loaded.'
@@ -142,7 +156,11 @@ class GraphicalInterface(QMainWindow):
 
 
 class ProgressBar(QMainWindow):
-    def __init__(self, len):
+    def __init__(self, len: int) -> None:
+        """Initializes the window for the progress bar.
+        Args:
+            len (int): Number of bins to iterate over.
+        """
         super().__init__()
         self.setWindowTitle('Progress')
         self.setFixedSize(300, 120)
@@ -154,6 +172,10 @@ class ProgressBar(QMainWindow):
         self.per = 0
 
     def increase(self, count: int) -> None:
+        """Increases progress bar.
+        Args:
+            count (int): Number of verified bins.
+        """
         self.progress_bar.setValue(count)
 
 

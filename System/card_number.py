@@ -8,11 +8,32 @@ logger.setLevel('INFO')
 
 
 def is_valid(hash: str, number: str) -> bool:
+    """Compares the hash of the card with the number.
+    Args:
+        hash (str): Hash cards.
+        number (str): Card number.
+    Returns:
+        bool: Verification result.
+    """
     return hashlib.sha224(number.encode()).hexdigest() == hash
 
 
 def get_number(hash: str, last_numerals: str,
-               bins: tuple, cores: int = mp.cpu_count(), func: Callable[[int], None] = None) -> list:
+               bins: tuple, cores: int = mp.cpu_count(), 
+               func: Callable[[int], None] = None) -> list:
+    """Gets correct card numbers by hash.
+    Args:
+        hash (str): Hash cards.
+        last_numerals (str): Last 4 digits of the card.
+        bins (tuple): Bins card.
+        cores (int, optional): Number of processor cores. 
+        Defaults to mp.cpu_count().
+        func (Callable[[int], None], optional): 
+        Annotation of the function to increase the progress bar. 
+        Defaults to None.
+    Returns:
+        list: List of correct numbers.
+    """
     result_list = []
     count_bins = 0
     with mp.Pool(processes=cores) as p:
@@ -29,6 +50,12 @@ def get_number(hash: str, last_numerals: str,
 
 
 def luhn_algorithm(number: str) -> bool:
+    """Сhecks if the card number is real.
+    Args:
+        number (str): Card number.
+    Returns:
+        bool: Verification result.
+    """
     last = number[-1]
     reverse_number = number[:len(number)-1]
     reverse_number = reverse_number[::-1]
